@@ -18,7 +18,7 @@ namespace Underscore.Bot.MessageRouting.DataStore.Azure
     [Serializable]
     public class AzureTableRoutingDataStore : IRoutingDataStore
     {
-        protected const string DefaultPartitionKey = "BotMessageRouting";
+        protected const string DefaultPartitionKey = "v0.0.1";
         protected const string TableNameBotInstances = "BotInstances";
         protected const string TableNameUsers = "Users";
         protected const string TableNameAggregationChannels = "AggregationChannels";
