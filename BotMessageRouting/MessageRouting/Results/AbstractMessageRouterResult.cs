@@ -5,11 +5,7 @@ namespace Underscore.Bot.MessageRouting.Results
     [Serializable]
     public abstract class AbstractMessageRouterResult
     {
-        public string ErrorMessage
-        {
-            get;
-            set;
-        }
+        public string ErrorMessage { get; set; }
 
         public AbstractMessageRouterResult()
         {

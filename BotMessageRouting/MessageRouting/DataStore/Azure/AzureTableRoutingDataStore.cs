@@ -192,7 +192,25 @@ namespace Underscore.Bot.MessageRouting.DataStore.Azure
             return AzureStorageHelper.DeleteEntryAsync<RoutingDataEntity>(
                 _connectionsTable, DefaultPartitionKey, rowKey).Result;
         }
-
+        private async Task DeleteAllRows<T>(CloudTable cloudTableToDelete) where T: ITableEntity, new()
+        {
+            // query all rows
+            CloudTable tableref = cloudTableToDelete; //client.GetTableReference(table);           
+            var query = new TableQuery<T>();
+            TableContinuationToken token = null;
+                                         
+            do
+            {
+                var result = await tableref.ExecuteQuerySegmentedAsync(query, token);  
+                foreach (var row in result)
+                {
+                    var op = TableOperation.Delete(row);
+                    tableref.ExecuteAsync(op);
+                }
+                token = result.ContinuationToken;
+            } while (token != null);  
+        
+        }
         #endregion Remove region
 
         #region Validators and helpers
@@ -217,6 +235,9 @@ namespace Underscore.Bot.MessageRouting.DataStore.Azure
                 {
                     await cloudTable.CreateIfNotExistsAsync();
                     Debug.WriteLine($"Table '{cloudTable.Name}' created or did already exist");
+#if DEBUG
+                    await DeleteAllRows<RoutingDataEntity>(cloudTable);
+#endif
                 }
                 catch (StorageException e)
                 {
@@ -225,14 +246,14 @@ namespace Underscore.Bot.MessageRouting.DataStore.Azure
             }
         }
 
-        private List<ConversationReference> GetAllConversationReferencesFromEntities(IList<RoutingDataEntity> entities)
+        private List<ConversationReference> GetAllConversationReferencesFromEntities(IList<RoutingDataEntity> routingDataEntities)
         {
             var conversationReferences = new List<ConversationReference>();
 
-            foreach (RoutingDataEntity entity in entities)
+            foreach (RoutingDataEntity routingDataEntity in routingDataEntities)
             {
                 var conversationReference =
-                    JsonConvert.DeserializeObject<ConversationReference>(entity.Body);
+                    JsonConvert.DeserializeObject<ConversationReference>(routingDataEntity.Body);
                 conversationReferences.Add(conversationReference);
             }
 

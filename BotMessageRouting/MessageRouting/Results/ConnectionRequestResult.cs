@@ -27,30 +27,18 @@ namespace Underscore.Bot.MessageRouting.Results
     [Serializable]
     public class ConnectionRequestResult : AbstractMessageRouterResult
     {
-        public ConnectionRequestResultType Type
-        {
-            get;
-            set;
-        }
+        public ConnectionRequestResultType Type { get; set; }
 
         /// <summary>
         /// The connection request associated with this result.
         /// </summary>
-        public ConnectionRequest ConnectionRequest
-        {
-            get;
-            set;
-        }
+        public ConnectionRequest ConnectionRequest { get; set; }
 
         /// <summary>
         /// If this result of type 'Rejected', this property can contain the user,
         /// who rejected the request.
         /// </summary>
-        public ConversationReference Rejecter
-        {
-            get;
-            set;
-        }
+        public ConversationReference Rejecter { get; set; }
 
         public ConnectionRequestResult() : base()
         {
@@ -73,14 +61,7 @@ namespace Underscore.Bot.MessageRouting.Results
             return connectionRequestResult;
         }
 
-        public override string ToJson()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
-
-        public override string ToString()
-        {
-            return ToJson();
-        }
+        public override string ToJson() => JsonConvert.SerializeObject(this);
+        public override string ToString() => ToJson();
     }
 }

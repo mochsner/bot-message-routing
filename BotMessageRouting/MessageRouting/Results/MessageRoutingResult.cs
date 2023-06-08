@@ -23,20 +23,12 @@ namespace Underscore.Bot.MessageRouting.Results
     [Serializable]
     public class MessageRoutingResult : AbstractMessageRouterResult
     {
-        public MessageRoutingResultType Type
-        {
-            get;
-            set;
-        }
+        public MessageRoutingResultType Type { get; set; }
 
         /// <summary>
         /// The connection associated with this result.
         /// </summary>
-        public Connection Connection
-        {
-            get;
-            set;
-        }
+        public Connection Connection { get; set; }
 
         public MessageRoutingResult() : base()
         {
@@ -59,10 +51,7 @@ namespace Underscore.Bot.MessageRouting.Results
             return messageRoutingResult;
         }
 
-        public override string ToJson()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToJson() => JsonConvert.SerializeObject(this);
 
         public override string ToString()
         {

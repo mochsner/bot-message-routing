@@ -11,17 +11,9 @@ namespace Underscore.Bot.MessageRouting.Utils
     /// </summary>
     public class ConnectorClientMessageBundle
     {
-        public ConnectorClient ConnectorClient
-        {
-            get;
-            set;
-        }
+        public ConnectorClient ConnectorClient { get; set; }
 
-        public IMessageActivity MessageActivity
-        {
-            get;
-            set;
-        }
+        public IMessageActivity MessageActivity { get; set; }
 
         /// <summary>
         /// Constructor.

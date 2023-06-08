@@ -22,17 +22,8 @@ namespace Underscore.Bot.MessageRouting
         /// <summary>
         /// The routing data and all the parties the bot has seen including the instances of itself.
         /// </summary>
-        public RoutingDataManager RoutingDataManager
-        {
-            get;
-            protected set;
-        }
-
-        public ILogger Logger
-        {
-            get;
-            set;
-        }
+        public RoutingDataManager RoutingDataManager { get; protected set; }
+        public ILogger Logger { get; set; }
 
         /// <summary>
         /// Constructor.
@@ -194,6 +185,7 @@ namespace Underscore.Bot.MessageRouting
         public virtual ConnectionRequestResult CreateConnectionRequest(
             ConversationReference requestor, bool rejectConnectionRequestIfNoAggregationChannel = false)
         {
+            // TODO - outlook if nobody is online, or submit, auto-"accept" + immediately reject? (latter for now if possible..)
             if (requestor == null)
             {
                 throw new ArgumentNullException("Requestor missing");
@@ -282,6 +274,7 @@ namespace Underscore.Bot.MessageRouting
                     $"Neither of the arguments ({nameof(conversationReference1)}, {nameof(conversationReference2)}) can be null");
             }
 
+            // TODO - what is a channelId look like?
             ConversationReference botInstance =
                 RoutingDataManager.FindConversationReference(
                     conversationReference1.ChannelId, conversationReference1.Conversation.Id, null, true);
@@ -355,7 +348,8 @@ namespace Underscore.Bot.MessageRouting
         }
 
         /// <summary>
-        /// Disconnects all connections associated with the given conversation reference.
+        /// Disconnects all connections associated with the given conversation reference
+        /// TODO - close the forum post connection
         /// </summary>
         /// <param name="conversationReference">The conversation reference connected in a conversation.</param>
         /// <returns>The results:
@@ -400,6 +394,7 @@ namespace Underscore.Bot.MessageRouting
         public virtual async Task<MessageRoutingResult> RouteMessageIfSenderIsConnectedAsync(
             IMessageActivity activity, bool addNameToMessage = true)
         {
+            /// TODO - learn more about this.... big function
             ConversationReference sender = CreateSenderConversationReference(activity);
             Connection connection = RoutingDataManager.FindConnection(sender);
 

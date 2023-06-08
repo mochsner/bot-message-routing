@@ -21,40 +21,24 @@ namespace Underscore.Bot.MessageRouting.Results
     [Serializable]
     public class ConnectionResult : AbstractMessageRouterResult
     {
-        public ConnectionResultType Type
-        {
-            get;
-            set;
-        }
+        public ConnectionResultType Type { get; set; }
 
         /// <summary>
         /// The connection associated with this result.
         /// </summary>
-        public Connection Connection
-        {
-            get;
-            set;
-        }
+        public Connection Connection { get; set; }
 
         /// <summary>
         /// The connection request, which was accepted, associated with this result.
         /// </summary>
-        public ConnectionRequest ConnectionRequest
-        {
-            get;
-            set;
-        }
+        public ConnectionRequest ConnectionRequest { get; set; }
 
         /// <summary>
         /// A valid conversation resource response instance of the newly created direct conversation
         /// (between the bot [who will relay messages] and the user, who accepted the request),
         /// when a new connection was established successfully.
         /// </summary>
-        public ConversationResourceResponse ConversationResourceResponse
-        {
-            get;
-            set;
-        }
+        public ConversationResourceResponse ConversationResourceResponse { get; set; }
 
         public ConnectionResult() : base()
         {
@@ -77,14 +61,7 @@ namespace Underscore.Bot.MessageRouting.Results
             return connectionResult;
         }
 
-        public override string ToJson()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
-
-        public override string ToString()
-        {
-            return ToJson();
-        }
+        public override string ToJson() => JsonConvert.SerializeObject(this);
+        public override string ToString() => ToJson();
     }
 }

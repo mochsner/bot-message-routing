@@ -8,21 +8,13 @@ namespace Underscore.Bot.MessageRouting.Models
     [Serializable]
     public class ConnectionRequest : IEquatable<ConnectionRequest>
     {
-        public ConversationReference Requestor
-        {
-            get;
-            set;
-        }
+        public ConversationReference Requestor { get; set; }
 
         /// <summary>
         /// Represents the time when a request was made.
         /// DateTime.MinValue will indicate that no request is pending.
         /// </summary>
-        public DateTime ConnectionRequestTime
-        {
-            get;
-            set;
-        }
+        public DateTime ConnectionRequestTime { get; set; }
 
         public ConnectionRequest(ConversationReference requestor)
         {

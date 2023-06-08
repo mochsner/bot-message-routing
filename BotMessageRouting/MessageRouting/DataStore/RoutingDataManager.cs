@@ -59,10 +59,8 @@ namespace Underscore.Bot.MessageRouting.DataStore
         /// </summary>
         /// <param name="conversationReference">The conversation reference to check.</param>
         /// <returns>True, if the given conversation reference is associated with a bot. False otherwise.</returns>
-        public static bool IsBot(ConversationReference conversationReference)
-        {
-            return (conversationReference?.Bot != null);
-        }
+        public static bool IsBot(ConversationReference conversationReference) 
+            => conversationReference?.Bot != null;
 
         /// <summary>
         /// Resolves the non-null channel account instance in the given conversation reference.
@@ -95,6 +93,7 @@ namespace Underscore.Bot.MessageRouting.DataStore
         /// <returns>The non-null channel account instance (user or bot) or null, if both are null.</returns>
         public static ChannelAccount GetChannelAccount(ConversationReference conversationReference)
         {
+            // TODO honestly this is a 100% pointless abstraction
             return GetChannelAccount(conversationReference, out bool isBot);
         }
 
@@ -117,6 +116,7 @@ namespace Underscore.Bot.MessageRouting.DataStore
 
             if (string.IsNullOrWhiteSpace(conversationAccount1Id) != string.IsNullOrWhiteSpace(conversationAccount2Id))
             {
+                // TODO fix above condition bug "if null != not null, they don't match" (red herring)
                 return false;
             }
 

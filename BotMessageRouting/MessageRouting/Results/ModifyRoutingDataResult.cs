@@ -12,11 +12,7 @@ namespace Underscore.Bot.MessageRouting.Results
 
     public class ModifyRoutingDataResult : AbstractMessageRouterResult
     {
-        public ModifyRoutingDataResultType Type
-        {
-            get;
-            set;
-        }
+        public ModifyRoutingDataResultType Type { get; set; }
 
         public override string ToJson()
         {
