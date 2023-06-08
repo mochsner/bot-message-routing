@@ -12,12 +12,13 @@ namespace Underscore.Bot.MessageRouting.Models
         /// Represents the last time in which user and agent interact in the connection.
         /// </summary>
         public DateTime TimeSinceLastActivity { get; set; }
-        public ConversationReference ConversationReference1 { get; set; }
-        public ConversationReference ConversationReference2 { get; set; }
-        public Connection(ConversationReference conversationReference1, ConversationReference conversationReference2)
+        public ConversationReference ConvRefAgent { get; set; }
+        public ConversationReference ConvRefTeamsPost { get; set; }
+        public ConversationReference ConvRefRequester { get; set; }
+        public Connection(ConversationReference convRefAgent, ConversationReference convRefRequester)
         {
-            ConversationReference1 = conversationReference1;
-            ConversationReference2 = conversationReference2;
+            ConvRefAgent = convRefAgent;
+            ConvRefRequester = convRefRequester;
             TimeSinceLastActivity = DateTime.Now;
         }
 
@@ -33,12 +34,12 @@ namespace Underscore.Bot.MessageRouting.Models
                 (other != null
                  &&
                  (
-                     (RoutingDataManager.Match(ConversationReference1, other.ConversationReference1)
-                         && RoutingDataManager.Match(ConversationReference2, other.ConversationReference2)
+                     (RoutingDataManager.Match(ConvRefAgent, other.ConvRefAgent)
+                         && RoutingDataManager.Match(ConvRefRequester, other.ConvRefRequester)
                      )
                      ||
-                     (RoutingDataManager.Match(ConversationReference1, other.ConversationReference2)
-                      && RoutingDataManager.Match(ConversationReference2, other.ConversationReference1)
+                     (RoutingDataManager.Match(ConvRefAgent, other.ConvRefRequester)
+                      && RoutingDataManager.Match(ConvRefRequester, other.ConvRefAgent)
                      )
                  )
                 );

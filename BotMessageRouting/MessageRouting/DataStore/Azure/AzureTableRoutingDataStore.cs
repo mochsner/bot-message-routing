@@ -142,8 +142,8 @@ namespace Underscore.Bot.MessageRouting.DataStore.Azure
 
         public bool AddConnection(Connection connection)
         {
-            string rowKey = connection.ConversationReference1.Conversation.Id +
-                connection.ConversationReference2.Conversation.Id;
+            string rowKey = connection.ConvRefAgent.Conversation.Id +
+                connection.ConvRefRequester.Conversation.Id;
             string body = JsonConvert.SerializeObject(connection);
 
             return InsertEntityToTable(rowKey, body, _connectionsTable);
@@ -187,8 +187,8 @@ namespace Underscore.Bot.MessageRouting.DataStore.Azure
 
         public bool RemoveConnection(Connection connection)
         {
-            string rowKey = connection.ConversationReference1.Conversation.Id +
-                connection.ConversationReference2.Conversation.Id;
+            string rowKey = connection.ConvRefAgent.Conversation.Id +
+                connection.ConvRefRequester.Conversation.Id;
             return AzureStorageHelper.DeleteEntryAsync<RoutingDataEntity>(
                 _connectionsTable, DefaultPartitionKey, rowKey).Result;
         }

@@ -248,8 +248,8 @@ namespace Underscore.Bot.MessageRouting
         /// Note that the conversation owner will have a new separate conversation reference in the created
         /// conversation, if a new direct conversation is created.
         /// </summary>
-        /// <param name="conversationReference1">The conversation reference who owns the conversation (e.g. customer service agent).</param>
-        /// <param name="conversationReference2">The other conversation reference in the conversation.</param>
+        /// <param name="convRefAgent">The conversation reference who owns the conversation (e.g. customer service agent).</param>
+        /// <param name="convRefRequester">The other conversation reference in the conversation.</param>
         /// <param name="createNewDirectConversation">
         /// If true, will try to create a new direct conversation between the bot and the
         /// conversation owner (e.g. agent) where the messages from the other (client) conversation
@@ -264,20 +264,20 @@ namespace Underscore.Bot.MessageRouting
         /// - ConnectionResultType.Error (see the error message for more details).
         /// </returns>
         public virtual async Task<ConnectionResult> ConnectAsync(
-            ConversationReference conversationReference1,
-            ConversationReference conversationReference2,
+            ConversationReference convRefAgent,
+            ConversationReference convRefRequester,
             bool createNewDirectConversation)
         {
-            if (conversationReference1 == null || conversationReference2 == null)
+            if (convRefAgent == null || convRefRequester == null)
             {
                 throw new ArgumentNullException(
-                    $"Neither of the arguments ({nameof(conversationReference1)}, {nameof(conversationReference2)}) can be null");
+                    $"Neither of the arguments ({nameof(convRefAgent)}, {nameof(convRefRequester)}) can be null");
             }
 
             // TODO - what is a channelId look like?
             ConversationReference botInstance =
                 RoutingDataManager.FindConversationReference(
-                    conversationReference1.ChannelId, conversationReference1.Conversation.Id, null, true);
+                    convRefAgent.ChannelId, convRefAgent.Conversation.Id, null, true);
 
             if (botInstance == null)
             {
@@ -294,10 +294,10 @@ namespace Underscore.Bot.MessageRouting
             {
                 ChannelAccount conversationReference1ChannelAccount =
                     RoutingDataManager.GetChannelAccount(
-                        conversationReference1, out bool conversationReference1IsBot);
+                        convRefAgent, out bool conversationReference1IsBot);
 
                 ConnectorClient connectorClient = new ConnectorClient(
-                    new Uri(conversationReference1.ServiceUrl), _microsoftAppCredentials);
+                    new Uri(convRefAgent.ServiceUrl), _microsoftAppCredentials);
 
                 try
                 {
@@ -319,15 +319,15 @@ namespace Underscore.Bot.MessageRouting
                     ConversationAccount directConversationAccount =
                         new ConversationAccount(id: conversationResourceResponse.Id);
 
-                    conversationReference1 = new ConversationReference(
+                    convRefAgent = new ConversationReference(
                         null,
                         conversationReference1IsBot ? null : conversationReference1ChannelAccount,
                         conversationReference1IsBot ? conversationReference1ChannelAccount : null,
                         directConversationAccount,
-                        conversationReference1.ChannelId,
-                        conversationReference1.ServiceUrl);
+                        convRefAgent.ChannelId,
+                        convRefAgent.ServiceUrl);
 
-                    RoutingDataManager.AddConversationReference(conversationReference1);
+                    RoutingDataManager.AddConversationReference(convRefAgent);
 
                     RoutingDataManager.AddConversationReference(new ConversationReference(
                         null,
@@ -339,9 +339,9 @@ namespace Underscore.Bot.MessageRouting
                 }
             }
 
-            Connection connection = new Connection(conversationReference1, conversationReference2);
+            Connection connection = new Connection(convRefAgent, convRefRequester);
             ConnectionResult connectResult =
-                RoutingDataManager.ConnectAndRemoveConnectionRequest(connection, conversationReference2);
+                RoutingDataManager.ConnectAndRemoveConnectionRequest(connection, convRefRequester);
             connectResult.ConversationResourceResponse = conversationResourceResponse;
 
             return connectResult;
@@ -407,8 +407,8 @@ namespace Underscore.Bot.MessageRouting
             if (connection != null)
             {
                 ConversationReference recipient =
-                    RoutingDataManager.Match(sender, connection.ConversationReference1)
-                        ? connection.ConversationReference2 : connection.ConversationReference1;
+                    RoutingDataManager.Match(sender, connection.ConvRefAgent)
+                        ? connection.ConvRefRequester : connection.ConvRefAgent;
 
                 if (recipient != null)
                 {

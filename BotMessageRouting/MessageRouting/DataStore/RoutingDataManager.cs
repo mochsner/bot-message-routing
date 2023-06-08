@@ -100,33 +100,33 @@ namespace Underscore.Bot.MessageRouting.DataStore
         /// <summary>
         /// Compares the conversation and channel account instances of the two given conversation references.
         /// </summary>
-        /// <param name="conversationReference1"></param>
-        /// <param name="conversationReference2"></param>
+        /// <param name="convRef1"></param>
+        /// <param name="convRef2"></param>
         /// <returns>True, if the IDs match. False otherwise.</returns>
         public static bool Match(
-            ConversationReference conversationReference1, ConversationReference conversationReference2)
+            ConversationReference convRef1, ConversationReference convRef2)
         {
-            if (conversationReference1 == null || conversationReference2 == null)
+            if (convRef1 == null || convRef2 == null)
             {
                 return false;
             }
 
-            string conversationAccount1Id = conversationReference1.Conversation?.Id;
-            string conversationAccount2Id = conversationReference2.Conversation?.Id;
+            string convAcctId1 = convRef1.Conversation?.Id;
+            string convAcctId2 = convRef2.Conversation?.Id;
 
-            if (string.IsNullOrWhiteSpace(conversationAccount1Id) != string.IsNullOrWhiteSpace(conversationAccount2Id))
+            if (string.IsNullOrWhiteSpace(convAcctId1) != string.IsNullOrWhiteSpace(convAcctId2))
             {
                 // TODO fix above condition bug "if null != not null, they don't match" (red herring)
                 return false;
             }
 
             bool conversationAccountsMatch =
-                (string.IsNullOrWhiteSpace(conversationAccount1Id)
-                 && string.IsNullOrWhiteSpace(conversationAccount2Id))
-                || conversationAccount1Id.Equals(conversationAccount2Id);
+                (string.IsNullOrWhiteSpace(convAcctId1)
+                 && string.IsNullOrWhiteSpace(convAcctId2))
+                || convAcctId1.Equals(convAcctId2);
 
-            ChannelAccount channelAccount1 = GetChannelAccount(conversationReference1, out bool isBot1);
-            ChannelAccount channelAccount2 = GetChannelAccount(conversationReference2, out bool isBot2);
+            ChannelAccount channelAccount1 = GetChannelAccount(convRef1, out bool isBot1);
+            ChannelAccount channelAccount2 = GetChannelAccount(convRef2, out bool isBot2);
 
             bool channelAccountsMatch =
                 (isBot1 == isBot2)
@@ -174,7 +174,8 @@ namespace Underscore.Bot.MessageRouting.DataStore
         /// <returns>The users as a readonly list.</returns>
         public IList<ConversationReference> GetUsers()
         {
-            return RoutingDataStore.GetUsers();
+            var _ = RoutingDataStore.GetUsers();
+            return _;
         }
 
         /// <returns>The bot instances as a readonly list.</returns>
@@ -330,8 +331,8 @@ namespace Underscore.Bot.MessageRouting.DataStore
 
                 foreach (Connection connection in GetConnections())
                 {
-                    if (Match(conversationReferenceToRemove, connection.ConversationReference1)
-                        || Match(conversationReferenceToRemove, connection.ConversationReference2))
+                    if (Match(conversationReferenceToRemove, connection.ConvRefAgent)
+                        || Match(conversationReferenceToRemove, connection.ConvRefRequester))
                     {
                         wasRemoved = true;
                         messageRouterResults.Add(Disconnect(connection)); // TODO: Check that the disconnect was successful
@@ -583,8 +584,8 @@ namespace Underscore.Bot.MessageRouting.DataStore
         {
             foreach (Connection connection in GetConnections())
             {
-                if (Match(conversationReference, connection.ConversationReference1)
-                    || Match(conversationReference, connection.ConversationReference2))
+                if (Match(conversationReference, connection.ConvRefAgent)
+                    || Match(conversationReference, connection.ConvRefRequester))
                 {
                     return connection;
                 }
@@ -614,14 +615,14 @@ namespace Underscore.Bot.MessageRouting.DataStore
             foreach (Connection connection in GetConnections())
             {
                 if (Match(
-                        conversationReferenceWhoseCounterpartToFind, connection.ConversationReference1))
+                        conversationReferenceWhoseCounterpartToFind, connection.ConvRefAgent))
                 {
-                    return connection.ConversationReference2;
+                    return connection.ConvRefRequester;
                 }
                 else if (Match(
-                            conversationReferenceWhoseCounterpartToFind, connection.ConversationReference2))
+                            conversationReferenceWhoseCounterpartToFind, connection.ConvRefRequester))
                 {
-                    return connection.ConversationReference1;
+                    return connection.ConvRefAgent;
                 }
             }
 
@@ -863,8 +864,8 @@ namespace Underscore.Bot.MessageRouting.DataStore
                 // Connections
                 foreach (Connection connection in GetConnections())
                 {
-                    conversationReferencesToSearch.Add(connection.ConversationReference1);
-                    conversationReferencesToSearch.Add(connection.ConversationReference2);
+                    conversationReferencesToSearch.Add(connection.ConvRefAgent);
+                    conversationReferencesToSearch.Add(connection.ConvRefRequester);
                 }
 
                 conversationReferencesFound = FindConversationReferences(
@@ -874,7 +875,7 @@ namespace Underscore.Bot.MessageRouting.DataStore
 
             if (conversationReferencesFound != null && conversationReferencesFound.Count > 0)
             {
-                return conversationReferencesFound[0];
+                return conversationReferencesFound[0]; // Means we only return one conversationReference ?
             }
 
             return null;
